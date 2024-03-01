@@ -5,7 +5,6 @@
 #include<stdbool.h>
 #include <time.h> 
 
-
 #define HT_SIZE 50
 #define RB_SIZE 10
 
