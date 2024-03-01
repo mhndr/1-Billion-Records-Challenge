@@ -1,0 +1,1215 @@
+
+opened file and created ring buffer
+reader thread reader_1 started
+reader thread reader_2 started
+reader thread reader_1 reading
+Buffer is Empty!!
+reader thread reader_3 started
+reader thread reader_3 reading
+Buffer is Empty!!
+writer thread started
+reader thread reader_4 started
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+reader thread reader_1 reading
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+reader thread reader_1 reading
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+reader thread reader_1 reading
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+Buffer is Empty!!
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+reader thread reader_1 reading
+Buffer is Empty!!
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_1 reading
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_1 reading
+Buffer is Empty!!
+reader thread reader_4 reading
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Empty!!
+reader thread reader_3 reading
+writing line Tokyo;35.6897
+
+reader thread reader_1 reading
+reader thread reader_2 reading
+Buffer is Empty!!
+Tokyo processing Tokyo
+writing line Jakarta;-6.1750
+
+inserting Tokyo : 35.689701
+reader thread reader_4 reading
+Jakarta processing Jakarta
+Buffer is Empty!!
+inserting Jakarta : -6.175000
+reader thread reader_4 reading
+reader thread reader_2 reading
+Buffer is Empty!!
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_1 reading
+writing line Delhi;28.6100
+
+reader thread reader_2 reading
+Delhi processing Delhi
+Buffer is Empty!!
+writing line Guangzhou;23.1300
+
+writing line Mumbai;19.0761
+
+reader thread reader_3 reading
+Guangzhou processing Guangzhou
+Buffer is Empty!!
+writing line Manila;14.5958
+
+inserting Guangzhou : 23.129999
+reader thread reader_3 reading
+writing line Shanghai;31.1667
+
+inserting Delhi : 28.610001
+reader thread reader_2 reading
+Mumbai processing Mumbai
+reader thread reader_1 reading
+writing line São Paulo;-23.5500
+
+reader thread reader_4 reading
+São Paulo processing São Paulo
+inserting Mumbai : 19.076099
+reader thread reader_3 reading
+Buffer is Empty!!
+Manila processing Manila
+inserting São Paulo : -23.549999
+Shanghai processing Shanghai
+writing line Seoul;37.5600
+
+reader thread reader_3 reading
+Seoul processing Seoul
+inserting Seoul : 37.560001
+inserting Manila : 14.595800
+reader thread reader_2 reading
+Buffer is Empty!!
+inserting Shanghai : 31.166700
+reader thread reader_3 reading
+Buffer is Empty!!
+reader thread reader_4 reading
+Buffer is Empty!!
+writing line Mexico City;19.4333
+
+reader thread reader_3 reading
+Mexico City processing Mexico City
+reader thread reader_1 reading
+Buffer is Empty!!
+reader thread reader_4 reading
+Buffer is Empty!!
+writing line Cairo;30.0444
+
+reader thread reader_2 reading
+writing line New York;40.6943
+
+reader thread reader_1 reading
+New York processing New York
+Cairo processing Cairo
+writing line Dhaka;23.7639
+
+writing line Beijing;39.9040
+
+reader thread reader_4 reading
+Dhaka processing Dhaka
+inserting Cairo : 30.044399
+reader thread reader_2 reading
+Beijing processing Beijing
+inserting New York : 40.694302
+reader thread reader_1 reading
+inserting Mexico City : 19.433300
+writing line Kolkāta;22.5675
+
+inserting Beijing : 39.903999
+reader thread reader_2 reading
+Kolkāta processing Kolkāta
+reader thread reader_3 reading
+Buffer is Empty!!
+inserting Dhaka : 23.763901
+reader thread reader_4 reading
+inserting Kolkāta : 22.567499
+writing line Bangkok;13.7525
+
+writing line Shenzhen;22.5350
+
+writing line Moscow;55.7558
+
+writing line Buenos Aires;-34.5997
+
+writing line Lagos;6.4550
+
+writing line Istanbul;41.0136
+
+writing line Karachi;24.8600
+
+writing line Bangalore;12.9789
+
+writing line Ho Chi Minh City;10.7756
+
+writing line Ōsaka;34.6939
+
+writing line Chengdu;30.6600
+
+Buffer is Full!!
+Buffer is Empty!!
+Buffer is Empty!!
+reader thread reader_2 reading
+Buffer is Full!!
+Bangkok processing Bangkok
+inserting Bangkok : 13.752500
+reader thread reader_3 reading
+reader thread reader_1 reading
+writing line Tehran;35.6892
+
+writing line Kinshasa;-4.3250
+
+writing line Rio de Janeiro;-22.9111
+
+Buffer is Full!!
+Moscow processing Moscow
+inserting Moscow : 55.755798
+Shenzhen processing Shenzhen
+inserting Shenzhen : 22.535000
+reader thread reader_3 reading
+Buenos Aires processing Buenos Aires
+inserting Buenos Aires : -34.599701
+Buffer is Full!!
+reader thread reader_2 reading
+reader thread reader_1 reading
+Istanbul processing Istanbul
+reader thread reader_3 reading
+Lagos processing Lagos
+Karachi processing Karachi
+inserting Karachi : 24.860001
+reader thread reader_3 reading
+Bangalore processing Bangalore
+writing line Chennai;13.0825
+
+inserting Istanbul : 41.013599
+reader thread reader_1 reading
+Ho Chi Minh City processing Ho Chi Minh City
+inserting Bangalore : 12.978900
+reader thread reader_3 reading
+Ōsaka processing Ōsaka
+inserting Lagos : 6.455000
+inserting Ho Chi Minh City : 10.775600
+reader thread reader_1 reading
+reader thread reader_4 reading
+Tehran processing Tehran
+inserting Tehran : 35.689201
+reader thread reader_4 reading
+Kinshasa processing Kinshasa
+inserting Ōsaka : 34.693901
+reader thread reader_3 reading
+Rio de Janeiro processing Rio de Janeiro
+Chengdu processing Chengdu
+inserting Kinshasa : -4.325000
+reader thread reader_4 reading
+writing line Xi’an;34.2667
+
+inserting Rio de Janeiro : -22.911100
+reader thread reader_3 reading
+Xi’an processing Xi’an
+Chennai processing Chennai
+writing line Lahore;31.5497
+
+writing line Chongqing;29.5500
+
+writing line Los Angeles;34.1141
+
+writing line Baoding;38.8671
+
+writing line London;51.5072
+
+writing line Paris;48.8567
+
+writing line Linyi;35.1041
+
+writing line Dongguan;23.0475
+
+writing line Hyderābād;17.3850
+
+writing line Tianjin;39.1467
+
+writing line Lima;-12.0600
+
+Buffer is Full!!
+inserting Chennai : 13.082500
+reader thread reader_4 reading
+Lahore processing Lahore
+inserting Xi’an : 34.266701
+reader thread reader_3 reading
+writing line Wuhan;30.5872
+
+inserting Lahore : 31.549700
+reader thread reader_4 reading
+Los Angeles processing Los Angeles
+reader thread reader_2 reading
+writing line Nanyang;32.9987
+
+inserting Chengdu : 30.660000
+reader thread reader_1 reading
+London processing London
+Baoding processing Baoding
+writing line Hangzhou;30.2500
+
+writing line Foshan;23.0292
+
+writing line Nagoya;35.1833
+
+Buffer is Full!!
+inserting Baoding : 38.867100
+reader thread reader_2 reading
+inserting Los Angeles : 34.114101
+reader thread reader_4 reading
+Linyi processing Linyi
+writing line Taipei;25.0375
+
+writing line Tongshan;34.2610
+
+Buffer is Full!!
+inserting Linyi : 35.104099
+reader thread reader_4 reading
+Dongguan processing Dongguan
+Chongqing processing Chongqing
+Paris processing Paris
+writing line Luanda;-8.8383
+
+Buffer is Full!!
+inserting Chongqing : 29.549999
+reader thread reader_3 reading
+inserting Paris : 48.856701
+reader thread reader_2 reading
+inserting Dongguan : 23.047501
+inserting London : 51.507198
+writing line Zhoukou;33.6250
+
+Hyderābād processing Hyderābād
+Tianjin processing Tianjin
+reader thread reader_4 reading
+Lima processing Lima
+inserting Hyderābād : 17.385000
+reader thread reader_3 reading
+Wuhan processing Wuhan
+reader thread reader_1 reading
+Nanyang processing Nanyang
+inserting Nanyang : 32.998699
+writing line Ganzhou;25.8292
+
+inserting Wuhan : 30.587200
+reader thread reader_3 reading
+Hangzhou processing Hangzhou
+reader thread reader_1 reading
+inserting Hangzhou : 30.250000
+reader thread reader_3 reading
+inserting Tianjin : 39.146702
+reader thread reader_2 reading
+Taipei processing Taipei
+inserting Lima : -12.060000
+reader thread reader_4 reading
+Tongshan processing Tongshan
+writing line Kuala Lumpur;3.1478
+
+inserting Taipei : 25.037500
+reader thread reader_2 reading
+Luanda processing Luanda
+inserting Tongshan : 34.261002
+reader thread reader_4 reading
+Nagoya processing Nagoya
+inserting Nagoya : 35.183300
+inserting Luanda : -8.838300
+reader thread reader_2 reading
+Ganzhou processing Ganzhou
+Foshan processing Foshan
+reader thread reader_3 reading
+writing line Heze;35.2333
+
+Zhoukou processing Zhoukou
+inserting Ganzhou : 25.829201
+inserting Foshan : 23.029200
+reader thread reader_1 reading
+Heze processing Heze
+inserting Zhoukou : 33.625000
+reader thread reader_4 reading
+Buffer is Empty!!
+writing line Quanzhou;24.9139
+
+writing line Chicago;41.8375
+
+writing line Nanjing;32.0608
+
+writing line Jining;35.4000
+
+writing line Hanoi;21.0283
+
+writing line Pune;18.5203
+
+writing line Fuyang;32.8986
+
+writing line Ahmedabad;23.0300
+
+writing line Johannesburg;-26.2044
+
+writing line Bogotá;4.7111
+
+writing line Dar es Salaam;-6.8161
+
+Buffer is Full!!
+inserting Heze : 35.233299
+reader thread reader_1 reading
+Kuala Lumpur processing Kuala Lumpur
+inserting Kuala Lumpur : 3.147800
+reader thread reader_3 reading
+Chicago processing Chicago
+Quanzhou processing Quanzhou
+writing line Shenyang;41.8025
+
+writing line Khartoum;15.5006
+
+Buffer is Full!!
+reader thread reader_4 reading
+Nanjing processing Nanjing
+reader thread reader_2 reading
+Jining processing Jining
+inserting Jining : 35.400002
+inserting Nanjing : 32.060799
+reader thread reader_4 reading
+Hanoi processing Hanoi
+writing line Shangqiu;34.4259
+
+reader thread reader_2 reading
+Pune processing Pune
+inserting Pune : 18.520300
+inserting Hanoi : 21.028299
+writing line Cangzhou;38.3037
+
+inserting Chicago : 41.837502
+reader thread reader_3 reading
+Fuyang processing Fuyang
+reader thread reader_4 reading
+Ahmedabad processing Ahmedabad
+inserting Quanzhou : 24.913900
+reader thread reader_1 reading
+Johannesburg processing Johannesburg
+writing line Hong Kong;22.3000
+
+inserting Ahmedabad : 23.030001
+reader thread reader_4 reading
+Bogotá processing Bogotá
+inserting Bogotá : 4.711100
+reader thread reader_4 reading
+writing line Shaoyang;27.2418
+
+inserting Fuyang : 32.898602
+inserting Johannesburg : -26.204399
+reader thread reader_1 reading
+reader thread reader_2 reading
+Khartoum processing Khartoum
+reader thread reader_3 reading
+Shangqiu processing Shangqiu
+inserting Shangqiu : 34.425900
+writing line Zhanjiang;21.1967
+
+writing line Yancheng;33.3936
+
+writing line Hengyang;26.8968
+
+writing line Riyadh;24.6333
+
+writing line Zhumadian;32.9773
+
+writing line Santiago;-33.4372
+
+writing line Xingtai;37.0659
+
+writing line Chattogram;22.3350
+
+Buffer is Full!!
+inserting Khartoum : 15.500600
+reader thread reader_2 reading
+Shenyang processing Shenyang
+inserting Shenyang : 41.802502
+Dar es Salaam processing Dar es Salaam
+Cangzhou processing Cangzhou
+reader thread reader_3 reading
+Hong Kong processing Hong Kong
+writing line Bijie;27.3019
+
+inserting Dar es Salaam : -6.816100
+reader thread reader_4 reading
+Shaoyang processing Shaoyang
+inserting Hong Kong : 22.299999
+reader thread reader_3 reading
+Zhanjiang processing Zhanjiang
+reader thread reader_1 reading
+Yancheng processing Yancheng
+writing line Shangrao;28.4419
+
+inserting Cangzhou : 38.303699
+reader thread reader_2 reading
+Hengyang processing Hengyang
+inserting Yancheng : 33.393600
+reader thread reader_1 reading
+inserting Zhanjiang : 21.196699
+reader thread reader_3 reading
+inserting Hengyang : 26.896799
+writing line Zunyi;27.7050
+
+Riyadh processing Riyadh
+inserting Riyadh : 24.633301
+Zhumadian processing Zhumadian
+reader thread reader_2 reading
+writing line Sūrat;21.1702
+
+inserting Shaoyang : 27.241800
+reader thread reader_4 reading
+Xingtai processing Xingtai
+Santiago processing Santiago
+writing line Surabaya;-7.2458
+
+writing line Hanoi;21.0283
+
+writing line Pune;18.5203
+
+writing line Fuyang;32.8986
+
+writing line Ahmedabad;23.0300
+
+writing line Johannesburg;-26.2044
+
+Buffer is Full!!
+inserting Xingtai : 37.065899
+reader thread reader_4 reading
+Chattogram processing Chattogram
+inserting Zhumadian : 32.977299
+writing line Bogotá;4.7111
+
+reader thread reader_1 reading
+Bijie processing Bijie
+inserting Bijie : 27.301901
+reader thread reader_3 reading
+Shangrao processing Shangrao
+inserting Shangrao : 28.441900
+reader thread reader_3 reading
+reader thread reader_1 reading
+Sūrat processing Sūrat
+inserting Chattogram : 22.334999
+reader thread reader_4 reading
+Surabaya processing Surabaya
+Buffer is Full!!
+inserting Surabaya : -7.245800
+inserting Sūrat : 21.170200
+reader thread reader_1 reading
+Hanoi processing Hanoi
+inserting Hanoi : 21.028299
+reader thread reader_1 reading
+Pune processing Pune
+inserting Pune : 18.520300
+writing line Dar es Salaam;-6.8161
+
+Zunyi processing Zunyi
+inserting Zunyi : 27.705000
+inserting Santiago : -33.437199
+reader thread reader_2 reading
+writing line Shenyang;41.8025
+
+reader thread reader_4 reading
+Ahmedabad processing Ahmedabad
+inserting Ahmedabad : 23.030001
+Fuyang processing Fuyang
+writing line Khartoum;15.5006
+
+writing line Shangqiu;34.4259
+
+writing line Cangzhou;38.3037
+
+writing line Hong Kong;22.3000
+
+inserting Fuyang : 32.898602
+reader thread reader_2 reading
+Johannesburg processing Johannesburg
+inserting Johannesburg : -26.204399
+reader thread reader_2 reading
+Bogotá processing Bogotá
+inserting Bogotá : 4.711100
+reader thread reader_2 reading
+Dar es Salaam processing Dar es Salaam
+reader thread reader_3 reading
+Shenyang processing Shenyang
+inserting Shenyang : 41.802502
+reader thread reader_3 reading
+Khartoum processing Khartoum
+reader thread reader_1 reading
+reader thread reader_4 reading
+Cangzhou processing Cangzhou
+inserting Dar es Salaam : -6.816100
+inserting Khartoum : 15.500600
+reader thread reader_3 reading
+writing line Shaoyang;27.2418
+
+inserting Cangzhou : 38.303699
+reader thread reader_4 reading
+Shaoyang processing Shaoyang
+Hong Kong processing Hong Kong
+writing line Zhanjiang;21.1967
+
+writing line Yancheng;33.3936
+
+writing line Hengyang;26.8968
+
+writing line Karachi;24.8600
+
+writing line Bangalore;12.9789
+
+writing line Ho Chi Minh City;10.7756
+
+writing line Ōsaka;34.6939
+
+writing line Chengdu;30.6600
+
+writing line Tehran;35.6892
+
+writing line Kinshasa;-4.3250
+
+writing line Rio de Janeiro;-22.9111
+
+Buffer is Full!!
+inserting Hong Kong : 22.299999
+reader thread reader_3 reading
+Zhanjiang processing Zhanjiang
+inserting Shaoyang : 27.241800
+reader thread reader_4 reading
+writing line Chennai;13.0825
+
+inserting Zhanjiang : 21.196699
+reader thread reader_3 reading
+Yancheng processing Yancheng
+Shangqiu processing Shangqiu
+inserting Shangqiu : 34.425900
+reader thread reader_2 reading
+Karachi processing Karachi
+inserting Karachi : 24.860001
+reader thread reader_2 reading
+Bangalore processing Bangalore
+inserting Bangalore : 12.978900
+inserting Yancheng : 33.393600
+reader thread reader_4 reading
+Ho Chi Minh City processing Ho Chi Minh City
+Hengyang processing Hengyang
+reader thread reader_2 reading
+writing line Xi’an;34.2667
+
+reader thread reader_1 reading
+Chengdu processing Chengdu
+inserting Hengyang : 26.896799
+reader thread reader_3 reading
+Tehran processing Tehran
+inserting Ho Chi Minh City : 10.775600
+reader thread reader_4 reading
+Kinshasa processing Kinshasa
+writing line Lahore;31.5497
+
+inserting Tehran : 35.689201
+reader thread reader_3 reading
+Rio de Janeiro processing Rio de Janeiro
+inserting Kinshasa : -4.325000
+writing line Chongqing;29.5500
+
+inserting Chengdu : 30.660000
+reader thread reader_1 reading
+Chennai processing Chennai
+reader thread reader_4 reading
+Xi’an processing Xi’an
+inserting Xi’an : 34.266701
+inserting Rio de Janeiro : -22.911100
+reader thread reader_3 reading
+Lahore processing Lahore
+Ōsaka processing Ōsaka
+inserting Ōsaka : 34.693901
+inserting Chennai : 13.082500
+writing line Los Angeles;34.1141
+
+inserting Lahore : 31.549700
+reader thread reader_3 reading
+Chongqing processing Chongqing
+reader thread reader_1 reading
+Los Angeles processing Los Angeles
+reader thread reader_4 reading
+inserting Los Angeles : 34.114101
+reader thread reader_1 reading
+Buffer is Empty!!
+writing line Baoding;38.8671
+
+Buffer is Empty!!
+reader thread reader_2 reading
+Baoding processing Baoding
+inserting Baoding : 38.867100
+reader thread reader_2 reading
+Buffer is Empty!!
+inserting Chongqing : 29.549999
+reader thread reader_3 reading
+reader thread reader_1 reading
+Buffer is Empty!!
+writing line London;51.5072P
+
+Buffer is Empty!!
+Reached EOF,writer thread exiting
+reader thread reader_4 reading
+London processing London
+reader thread reader_2 reading
+reader thread reader_1 exited
+Buffer is Empty!!
+inserting London : 51.507198
+reader thread reader_4 exited
+reader thread reader_3 exited
+reader thread reader_2 exited
+inserting Tokyo-35.689701Insert key - Tokyo
+lock acquired on entry 19 
+lock released on entry 19 
+inserting Jakarta--6.175000Insert key - Jakarta
+lock acquired on entry 7 
+lock released on entry 7 
+inserting Delhi-28.610001Insert key - Delhi
+lock acquired on entry 11 
+lock released on entry 11 
+inserting Guangzhou-23.129999Insert key - Guangzhou
+lock acquired on entry 25 
+lock released on entry 25 
+inserting Mumbai-19.076099Insert key - Mumbai
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Manila-14.595800Insert key - Manila
+lock acquired on entry 9 
+lock released on entry 9 
+inserting Shanghai-31.166700Insert key - Shanghai
+lock acquired on entry 23 
+lock released on entry 23 
+inserting São Paulo--23.549999Insert key - São Paulo
+lock acquired on entry 29 
+lock released on entry 29 
+inserting Seoul-37.560001Insert key - Seoul
+lock acquired on entry 30 
+lock released on entry 30 
+inserting Mexico City-19.433300Insert key - Mexico City
+lock acquired on entry 49 
+lock released on entry 49 
+inserting Cairo-30.044399Insert key - Cairo
+lock acquired on entry 39 
+lock released on entry 39 
+inserting New York-40.694302Insert key - New York
+lock acquired on entry 13 
+lock released on entry 13 
+inserting Dhaka-23.763901Insert key - Dhaka
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Beijing-39.903999Insert key - Beijing
+lock acquired on entry 43 
+lock released on entry 43 
+inserting Kolkāta-22.567499Insert key - Kolkāta
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Bangkok-13.752500Insert key - Bangkok
+lock acquired on entry 13 
+lock released on entry 13 
+inserting Shenzhen-22.535000Insert key - Shenzhen
+lock acquired on entry 14 
+lock released on entry 14 
+inserting Moscow-55.755798Insert key - Moscow
+lock acquired on entry 27 
+lock released on entry 27 
+inserting Buenos Aires--34.599701Insert key - Buenos Aires
+lock acquired on entry 15 
+lock released on entry 15 
+inserting Lagos-6.455000Insert key - Lagos
+lock acquired on entry 7 
+lock released on entry 7 
+inserting Istanbul-41.013599Insert key - Istanbul
+lock acquired on entry 2 
+lock released on entry 2 
+inserting Karachi-24.860001Insert key - Karachi
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Bangalore-12.978900Insert key - Bangalore
+lock acquired on entry 1 
+lock released on entry 1 
+inserting Ho Chi Minh City-10.775600Insert key - Ho Chi Minh City
+lock acquired on entry 17 
+lock released on entry 17 
+inserting Ōsaka-34.693901Insert key - Ōsaka
+lock acquired on entry 17 
+lock released on entry 17 
+inserting Chengdu-30.660000Insert key - Chengdu
+lock acquired on entry 47 
+lock released on entry 47 
+inserting Tehran-35.689201Insert key - Tehran
+lock acquired on entry 0 
+lock released on entry 0 
+inserting Kinshasa--4.325000Insert key - Kinshasa
+lock acquired on entry 3 
+lock released on entry 3 
+inserting Rio de Janeiro--22.911100Insert key - Rio de Janeiro
+lock acquired on entry 19 
+lock released on entry 19 
+inserting Chennai-13.082500Insert key - Chennai
+lock acquired on entry 1 
+lock released on entry 1 
+inserting Xi’an-34.266701Insert key - Xi’an
+lock acquired on entry 4 
+lock released on entry 4 
+inserting Lahore-31.549700Insert key - Lahore
+lock acquired on entry 43 
+lock released on entry 43 
+inserting Chongqing-29.549999Insert key - Chongqing
+lock acquired on entry 17 
+lock released on entry 17 
+inserting Los Angeles-34.114101Insert key - Los Angeles
+lock acquired on entry 25 
+lock released on entry 25 
+inserting Baoding-38.867100Insert key - Baoding
+lock acquired on entry 29 
+lock released on entry 29 
+inserting London-51.507198Insert key - London
+lock acquired on entry 18 
+lock released on entry 18 
+inserting Paris-48.856701Insert key - Paris
+lock acquired on entry 21 
+lock released on entry 21 
+inserting Linyi-35.104099Insert key - Linyi
+lock acquired on entry 17 
+lock released on entry 17 
+inserting Dongguan-23.047501Insert key - Dongguan
+lock acquired on entry 8 
+lock released on entry 8 
+inserting Hyderābād-17.385000Insert key - Hyderābād
+lock acquired on entry 0 
+lock released on entry 0 
+inserting Tianjin-39.146702Insert key - Tianjin
+lock acquired on entry 42 
+lock released on entry 42 
+inserting Lima--12.060000Insert key - Lima
+lock acquired on entry 17 
+lock released on entry 17 
+inserting Wuhan-30.587200Insert key - Wuhan
+lock acquired on entry 0 
+lock released on entry 0 
+inserting Nanyang-32.998699Insert key - Nanyang
+lock acquired on entry 13 
+lock released on entry 13 
+inserting Hangzhou-30.250000Insert key - Hangzhou
+lock acquired on entry 21 
+lock released on entry 21 
+inserting Foshan-23.029200Insert key - Foshan
+lock acquired on entry 42 
+lock released on entry 42 
+inserting Nagoya-35.183300Insert key - Nagoya
+lock acquired on entry 7 
+lock released on entry 7 
+inserting Taipei-25.037500Insert key - Taipei
+lock acquired on entry 49 
+lock released on entry 49 
+inserting Tongshan-34.261002Insert key - Tongshan
+lock acquired on entry 40 
+lock released on entry 40 
+inserting Luanda--8.838300Insert key - Luanda
+lock acquired on entry 7 
+lock released on entry 7 
+inserting Zhoukou-33.625000Insert key - Zhoukou
+lock acquired on entry 25 
+lock released on entry 25 
+inserting Ganzhou-25.829201Insert key - Ganzhou
+lock acquired on entry 9 
+lock released on entry 9 
+inserting Kuala Lumpur-3.147800Insert key - Kuala Lumpur
+lock acquired on entry 18 
+lock released on entry 18 
+inserting Heze-35.233299Insert key - Heze
+lock acquired on entry 21 
+lock released on entry 21 
+inserting Quanzhou-24.913900Insert key - Quanzhou
+lock acquired on entry 1 
+lock released on entry 1 
+inserting Chicago-41.837502Insert key - Chicago
+lock acquired on entry 13 
+lock released on entry 13 
+inserting Nanjing-32.060799Insert key - Nanjing
+lock acquired on entry 21 
+lock released on entry 21 
+inserting Jining-35.400002Insert key - Jining
+lock acquired on entry 7 
+lock released on entry 7 
+inserting Hanoi-21.028299Insert key - Hanoi
+lock acquired on entry 45 
+lock released on entry 45 
+inserting Pune-18.520300Insert key - Pune
+lock acquired on entry 43 
+lock released on entry 43 
+inserting Fuyang-32.898602Insert key - Fuyang
+lock acquired on entry 43 
+lock released on entry 43 
+inserting Ahmedabad-23.030001Insert key - Ahmedabad
+lock acquired on entry 4 
+lock released on entry 4 
+inserting Johannesburg--26.204399Insert key - Johannesburg
+lock acquired on entry 47 
+lock released on entry 47 
+inserting Bogotá-4.711100Insert key - Bogotá
+lock acquired on entry 43 
+lock released on entry 43 
+inserting Dar es Salaam--6.816100Insert key - Dar es Salaam
+lock acquired on entry 19 
+lock released on entry 19 
+inserting Shenyang-41.802502Insert key - Shenyang
+lock acquired on entry 39 
+lock released on entry 39 
+inserting Khartoum-15.500600Insert key - Khartoum
+lock acquired on entry 3 
+lock released on entry 3 
+inserting Shangqiu-34.425900Insert key - Shangqiu
+lock acquired on entry 37 
+lock released on entry 37 
+inserting Cangzhou-38.303699Insert key - Cangzhou
+lock acquired on entry 33 
+lock released on entry 33 
+inserting Hong Kong-22.299999Insert key - Hong Kong
+lock acquired on entry 9 
+lock released on entry 9 
+inserting Shaoyang-27.241800Insert key - Shaoyang
+lock acquired on entry 21 
+lock released on entry 21 
+inserting Zhanjiang-21.196699Insert key - Zhanjiang
+lock acquired on entry 37 
+lock released on entry 37 
+inserting Yancheng-33.393600Insert key - Yancheng
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Hengyang-26.896799Insert key - Hengyang
+lock acquired on entry 31 
+lock released on entry 31 
+inserting Riyadh-24.633301Insert key - Riyadh
+lock acquired on entry 14 
+lock released on entry 14 
+inserting Zhumadian-32.977299Insert key - Zhumadian
+lock acquired on entry 6 
+lock released on entry 6 
+inserting Santiago--33.437199Insert key - Santiago
+lock acquired on entry 49 
+lock released on entry 49 
+inserting Xingtai-37.065899Insert key - Xingtai
+lock acquired on entry 29 
+lock released on entry 29 
+inserting Chattogram-22.334999Insert key - Chattogram
+lock acquired on entry 9 
+lock released on entry 9 
+inserting Bijie-27.301901Insert key - Bijie
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Shangrao-28.441900Insert key - Shangrao
+lock acquired on entry 37 
+lock released on entry 37 
+inserting Zunyi-27.705000Insert key - Zunyi
+lock acquired on entry 23 
+lock released on entry 23 
+inserting Sūrat-21.170200Insert key - Sūrat
+lock acquired on entry 26 
+lock released on entry 26 
+inserting Surabaya--7.245800Insert key - Surabaya
+lock acquired on entry 29 
+lock released on entry 29 
+inserting Hanoi-21.028299Insert key - Hanoi
+lock acquired on entry 45 
+	found existing record Hanoi
+lock released on entry 45 
+inserting Pune-18.520300Insert key - Pune
+lock acquired on entry 43 
+	found existing record Pune
+lock released on entry 43 
+inserting Fuyang-32.898602Insert key - Fuyang
+lock acquired on entry 43 
+	found existing record Fuyang
+lock released on entry 43 
+inserting Ahmedabad-23.030001Insert key - Ahmedabad
+lock acquired on entry 4 
+	found existing record Ahmedabad
+lock released on entry 4 
+inserting Johannesburg--26.204399Insert key - Johannesburg
+lock acquired on entry 47 
+	found existing record Johannesburg
+lock released on entry 47 
+inserting Bogotá-4.711100Insert key - Bogotá
+lock acquired on entry 43 
+	found existing record Bogotá
+lock released on entry 43 
+inserting Dar es Salaam--6.816100Insert key - Dar es Salaam
+lock acquired on entry 19 
+	found existing record Dar es Salaam
+lock released on entry 19 
+inserting Shenyang-41.802502Insert key - Shenyang
+lock acquired on entry 39 
+	found existing record Shenyang
+lock released on entry 39 
+inserting Khartoum-15.500600Insert key - Khartoum
+lock acquired on entry 3 
+	found existing record Khartoum
+lock released on entry 3 
+inserting Shangqiu-34.425900Insert key - Shangqiu
+lock acquired on entry 37 
+	found existing record Shangqiu
+lock released on entry 37 
+inserting Cangzhou-38.303699Insert key - Cangzhou
+lock acquired on entry 33 
+	found existing record Cangzhou
+lock released on entry 33 
+inserting Hong Kong-22.299999Insert key - Hong Kong
+lock acquired on entry 9 
+	found existing record Hong Kong
+lock released on entry 9 
+inserting Shaoyang-27.241800Insert key - Shaoyang
+lock acquired on entry 21 
+	found existing record Shaoyang
+lock released on entry 21 
+inserting Zhanjiang-21.196699Insert key - Zhanjiang
+lock acquired on entry 37 
+	found existing record Zhanjiang
+lock released on entry 37 
+inserting Yancheng-33.393600Insert key - Yancheng
+lock acquired on entry 23 
+	found existing record Yancheng
+lock released on entry 23 
+inserting Hengyang-26.896799Insert key - Hengyang
+lock acquired on entry 31 
+	found existing record Hengyang
+lock released on entry 31 
+inserting Karachi-24.860001Insert key - Karachi
+lock acquired on entry 23 
+	found existing record Karachi
+lock released on entry 23 
+inserting Bangalore-12.978900Insert key - Bangalore
+lock acquired on entry 1 
+	found existing record Bangalore
+lock released on entry 1 
+inserting Ho Chi Minh City-10.775600Insert key - Ho Chi Minh City
+lock acquired on entry 17 
+	found existing record Ho Chi Minh City
+lock released on entry 17 
+inserting Ōsaka-34.693901Insert key - Ōsaka
+lock acquired on entry 17 
+	found existing record Ōsaka
+lock released on entry 17 
+inserting Chengdu-30.660000Insert key - Chengdu
+lock acquired on entry 47 
+	found existing record Chengdu
+lock released on entry 47 
+inserting Tehran-35.689201Insert key - Tehran
+lock acquired on entry 0 
+	found existing record Tehran
+lock released on entry 0 
+inserting Kinshasa--4.325000Insert key - Kinshasa
+lock acquired on entry 3 
+	found existing record Kinshasa
+lock released on entry 3 
+inserting Rio de Janeiro--22.911100Insert key - Rio de Janeiro
+lock acquired on entry 19 
+	found existing record Rio de Janeiro
+lock released on entry 19 
+inserting Chennai-13.082500Insert key - Chennai
+lock acquired on entry 1 
+	found existing record Chennai
+lock released on entry 1 
+inserting Xi’an-34.266701Insert key - Xi’an
+lock acquired on entry 4 
+	found existing record Xi’an
+lock released on entry 4 
+inserting Lahore-31.549700Insert key - Lahore
+lock acquired on entry 43 
+	found existing record Lahore
+lock released on entry 43 
+inserting Chongqing-29.549999Insert key - Chongqing
+lock acquired on entry 17 
+	found existing record Chongqing
+lock released on entry 17 
+inserting Los Angeles-34.114101Insert key - Los Angeles
+lock acquired on entry 25 
+	found existing record Los Angeles
+lock released on entry 25 
+inserting Baoding-38.867100Insert key - Baoding
+lock acquired on entry 29 
+	found existing record Baoding
+lock released on entry 29 
+inserting London-51.507198Insert key - London
+lock acquired on entry 18 
+	found existing record London
+lock released on entry 18 
+Tehran Hyderābād Wuhan 
+Bangalore Chennai Quanzhou 
+Istanbul 
+Kinshasa Khartoum 
+Xi’an Ahmedabad 
+NULL
+Zhumadian 
+Jakarta Lagos Nagoya Luanda Jining 
+Dongguan 
+Manila Ganzhou Hong Kong Chattogram 
+NULL
+Delhi 
+NULL
+New York Bangkok Nanyang Chicago 
+Shenzhen Riyadh 
+Buenos Aires 
+NULL
+Ho Chi Minh City Ōsaka Chongqing Linyi Lima 
+London Kuala Lumpur 
+Tokyo Rio de Janeiro Dar es Salaam 
+NULL
+Paris Hangzhou Heze Nanjing Shaoyang 
+NULL
+Mumbai Shanghai Dhaka Kolkāta Karachi Yancheng Bijie Zunyi 
+NULL
+Guangzhou Los Angeles Zhoukou 
+Sūrat 
+Moscow 
+NULL
+São Paulo Baoding Xingtai Surabaya 
+Seoul 
+Hengyang 
+NULL
+Cangzhou 
+NULL
+NULL
+NULL
+Shangqiu Zhanjiang Shangrao 
+NULL
+Cairo Shenyang 
+Tongshan 
+NULL
+Tianjin Foshan 
+Beijing Lahore Pune Fuyang Bogotá 
+NULL
+Hanoi 
+NULL
+Chengdu Johannesburg 
+NULL
+Mexico City Taipei Santiago 
+
+KEYS-get(key)
+Tehran - 35.000000
+Hyderābād - 17.000000
+Wuhan - 30.000000
+Bangalore - 12.000000
+Chennai - 13.000000
+Quanzhou - 24.000000
+Istanbul - 41.000000
+Kinshasa - -4.000000
+Khartoum - 15.000000
+Xi’an - 34.000000
+Ahmedabad - 23.000000
+Zhumadian - 32.000000
+Jakarta - -6.000000
+Lagos - 6.000000
+Nagoya - 35.000000
+Luanda - -8.000000
+Jining - 35.000000
+Dongguan - 23.000000
+Manila - 14.000000
+Ganzhou - 25.000000
+Hong Kong - 22.000000
+Chattogram - 22.000000
+Delhi - 28.000000
+New York - 40.000000
+Bangkok - 13.000000
+Nanyang - 32.000000
+Chicago - 41.000000
+Shenzhen - 22.000000
+Riyadh - 24.000000
+Buenos Aires - -34.000000
+Ho Chi Minh City - 10.000000
+Ōsaka - 34.000000
+Chongqing - 29.000000
+Linyi - 35.000000
+Lima - -12.000000
+London - 51.000000
+Kuala Lumpur - 3.000000
+Tokyo - 35.000000
+Rio de Janeiro - -22.000000
+Dar es Salaam - -6.000000
+Paris - 48.000000
+Hangzhou - 30.000000
+Heze - 35.000000
+Nanjing - 32.000000
+Shaoyang - 27.000000
+Mumbai - 19.000000
+Shanghai - 31.000000
+Dhaka - 23.000000
+Kolkāta - 22.000000
+Karachi - 24.000000
+Yancheng - 33.000000
+Bijie - 27.000000
+Zunyi - 27.000000
+Guangzhou - 23.000000
+Los Angeles - 34.000000
+Zhoukou - 33.000000
+Sūrat - 21.000000
+Moscow - 55.000000
+São Paulo - -23.000000
+Baoding - 38.000000
+Xingtai - 37.000000
+Surabaya - -7.000000
+Seoul - 37.000000
+Hengyang - 26.000000
+Cangzhou - 38.000000
+Shangqiu - 34.000000
+Zhanjiang - 21.000000
+Shangrao - 28.000000
+Cairo - 30.000000
+Shenyang - 41.000000
+Tongshan - 34.000000
+Tianjin - 39.000000
+Foshan - 23.000000
+Beijing - 39.000000
+Lahore - 31.000000
+Pune - 18.000000
+Fuyang - 32.000000
+Bogotá - 4.000000
+Hanoi - 21.000000
+Chengdu - 30.000000
+Johannesburg - -26.000000
+Mexico City - 19.000000
+Taipei - 25.000000
+Santiago - -33.000000%  
