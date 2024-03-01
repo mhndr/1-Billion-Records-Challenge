@@ -160,7 +160,6 @@ int print_ht(Hashtable* ht) {
 	return 0;	
 }
 
-
 //int calculate_mean_and_print_result(Hashtable *ht) {
 //	
 //}
