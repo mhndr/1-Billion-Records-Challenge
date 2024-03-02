@@ -5,8 +5,9 @@
 #include<stdbool.h>
 #include <time.h> 
 
-#define HT_SIZE 50
-#define RB_SIZE 10
+
+#define HT_SIZE 5000
+#define RB_SIZE 100
 
 typedef struct {
 	char *key;
@@ -45,9 +46,13 @@ int insert(Hashtable *ht, char* key, float value) {
 	size_t key_hash = hash(key);
 	size_t idx = key_hash % HT_SIZE;
 	Entry* entry = &ht->entries[idx];
-	printf("Insert key - %s",key);
+	#ifdef DEBUG 
+		printf("Insert key - %s",key);
+	#endif
 	pthread_mutex_lock(&entry->lock); 
-	printf("\nlock acquired on entry %zu ",idx);
+	#ifdef DEBUG 
+		printf("\nlock acquired on entry %zu ",idx); 
+	#endif
 	if(entry->size == 0) {
 		//new entry
 		entry->size = 1;
@@ -68,7 +73,9 @@ int insert(Hashtable *ht, char* key, float value) {
 		Record *record=NULL;
 		for(i=0;i<entry->size;i++) {
 			if(!strcmp(entry->array[i].key,key)){
-				printf("\n\tfound existing record %s",key);
+				#ifdef DEBUG 
+					printf("\n\tfound existing record %s",key); 
+				#endif
 				record = &entry->array[i];
 				break;
 			}
@@ -76,6 +83,9 @@ int insert(Hashtable *ht, char* key, float value) {
 		if(record == NULL) {
 			//create new record
 			entry->size++;
+			#ifdef DEBUG 
+				printf("\nentry size = %zu",entry->size); 
+			#endif
 			entry->array = (Record*) realloc(entry->array,sizeof(Record)*(entry->size));
 			entry->array[entry->size-1].key = (char*)malloc(strlen(key)+1);
 			strncpy(entry->array[entry->size-1].key, key,strlen(key));
@@ -94,8 +104,13 @@ int insert(Hashtable *ht, char* key, float value) {
 				record->min = value;
 		}
 	}	
+	#ifdef DEBUG 
+		printf("\nnumber of entries = %zu",ht->nentries); 
+	#endif
 	pthread_mutex_unlock(&entry->lock); 
-	printf("\nlock released on entry %zu ",idx);
+	#ifdef DEBUG 
+		printf("\nlock released on entry %zu ",idx); 
+	#endif
 	return 0;
 }
 
@@ -129,7 +144,9 @@ Hashtable* create_hashtable() {
 		ht->entries[i].size = 0;
 		ht->entries[i].array = NULL;
 		if (pthread_mutex_init(&ht->entries[i].lock, NULL) != 0) { 
-        	printf("\n mutex init has failed for entry no: %d",i); 
+        	#ifdef DEBUG 
+				printf("\n mutex init has failed for entry no: %d",i);  
+			#endif
         	return NULL; 
     	} 
 	}
@@ -158,6 +175,7 @@ int print_ht(Hashtable* ht) {
 	}
 	return 0;	
 }
+
 
 //int calculate_mean_and_print_result(Hashtable *ht) {
 //	
@@ -230,7 +248,7 @@ bool is_buffer_full(RingBuffer *rb) {
 	return false;
 }
 
-void* read_buffer(RingBuffer *rb) {
+void* read_buffer(RingBuffer *rb,struct timespec *sleep) {
 	if(!rb)
 		return NULL;
 
@@ -248,10 +266,11 @@ void* read_buffer(RingBuffer *rb) {
 		return data;
 	}	
 	printf("\nBuffer is Empty!!");
+	nanosleep(sleep,sleep);
 	return NULL;
 }
 
-bool write_buffer(RingBuffer *rb, char** data) {
+bool write_buffer(RingBuffer *rb, char** data,struct timespec *sleep) {
 	if(!rb)
 		return false;
 
@@ -267,6 +286,7 @@ bool write_buffer(RingBuffer *rb, char** data) {
 		return true;
 	}	
 	printf("\nBuffer is Full!!");
+	nanosleep(sleep,sleep);
 	return false;
 }
 
@@ -287,15 +307,15 @@ void* rb_write(void* arg) {
 	char *line =(char*) malloc(256);;
 	struct timespec sleep = ((Thread_arg*)arg)->sleep;
 	bool written;
-	
+
 	printf("\nwriter thread started");
 	while(fgets(line, 256, file)) { 
 		printf("\nwriting line %s",line);
 		written = false;
 		while(!written){
-			written = write_buffer(rb,&line);
-			if(!written)
-				nanosleep(&sleep,&sleep);
+			written = write_buffer(rb,&line,&sleep);
+			//if(!written)
+			//	nanosleep(&sleep,&sleep);
 		}
 		line = (char*)malloc(256);
 	}
@@ -318,22 +338,30 @@ void* rb_read(void* arg) {
 	printf("\nreader thread %s started",thread_name);
 	while(!game_over) {
 		printf("\nreader thread %s reading",thread_name);
-		line = (char*) read_buffer(rb);
+		line = (char*) read_buffer(rb,&sleep);
 		if(line != NULL) {
 			name = strtok_r(line,";",&brkb);
-			printf("\n%s processing %s",name,line);
 			reading= strtok_r(0,"\n",&brkb);
+			if(reading==NULL) {
+				fprintf(stderr,"\nInvalid reading from line %s",line);
+				//ignore this line
+				//goto sleep;
+				continue;
+			}
 			value = strtof(reading,NULL);    
 			printf("\ninserting %s : %f", name,value);
 			//insert(ht,name,value);	 
-			//free(line);
+			free(line);
 			line = NULL;
 		}
-		else{
+		/*else{
+			sleep:
 			nanosleep(&sleep,&sleep);
-		}
+		}*/
 	}
+	#ifdef DEBUG
 	printf("\nreader thread %s exited",thread_name);
+	#endif
 	return NULL;
 }
 
@@ -363,10 +391,11 @@ void* rb_test(void) {
 	
 	error = pthread_create(&(tid[0]), NULL, &rb_write, writer); 
     if (error != 0){
-		printf("failed to create writer thread");
+		fprintf(stderr,"failed to create writer thread");
  		return NULL;
 	}
-	
+
+
 	for(int i=1;i<5;i++) {
 		Thread_arg *reader = malloc(sizeof(Thread_arg));
 		sprintf(reader->name,"reader_%d",i);
@@ -374,11 +403,11 @@ void* rb_test(void) {
 		reader->file = NULL;
 		reader->ht = ht;
 		reader->sleep.tv_sec = 0;
-		reader->sleep.tv_nsec = 20;		
+		reader->sleep.tv_nsec = 100;		
 
 		error = pthread_create(&(tid[i]), NULL, &rb_read, reader); 
 		if (error != 0){
-			printf("failed to create writer thread_%d",i);
+			fprintf(stderr,"failed to create writer thread_%d",i);
 			return NULL;
 		}
 	}
@@ -425,6 +454,6 @@ void ht_test() {
 
 int main() {
 	rb_test();
-	ht_test();
+	//ht_test();
 	return 0;
 }
