@@ -1,14 +1,19 @@
-#include<stdio.h>
-#include<strings.h>
-#include<stdlib.h>
-#include<pthread.h>
-#include<stdbool.h>
+#include <stdio.h>
+#include <strings.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdbool.h>
 #include <time.h> 
+#include <semaphore.h>
 #include "ring_buffer.h"
-
 
 #define HT_SIZE 50000
 #define RB_SIZE 1000
+
+#define THREAD_MAX (5)
+
+pthread_t tid[THREAD_MAX];
+bool game_over = false;
 
 
 extern char **str_split(const char *in, size_t in_len, char delm, size_t *num_elm, size_t max);
@@ -38,6 +43,15 @@ typedef struct {
 	size_t table_sz;
 	List **list;	
 }Hashtable;
+
+typedef struct {
+	char name[25];
+	Buffer_t *rb;
+	Hashtable *ht;
+	FILE *file;
+	pthread_t *readers;
+	size_t reader_cnt;
+}Thread_arg;
 
 
 long hash(char* key) {
@@ -232,183 +246,157 @@ int calculate_mean_and_print_result(Hashtable *ht) {
 }
 
 
-typedef struct {
-	char **buffer;
-	size_t buf_sz;
-	size_t n_elems;
-	size_t head;
-	size_t tail;
-	pthread_mutex_t rlock;
-	pthread_mutex_t wlock;	
-} RingBuffer;
+Buffer_t* Buffer_create(int n) {
+	Buffer_t *buffer = (Buffer_t*) malloc(sizeof(Buffer_t));
+	buffer->records = calloc(n,sizeof(char*));
+	buffer->n = n;
+	buffer->count = 0;
+	buffer->front = buffer->rear = 0;
 
-RingBuffer* create_ring_buffer() {
-	RingBuffer *rb = (RingBuffer*) malloc(sizeof(RingBuffer));
-	rb->buf_sz = RB_SIZE;
-	rb->buffer = (char**)malloc(sizeof(char*));
-	rb->n_elems = 0;
-	rb->head = 0;
-	rb->tail = 0;
-	pthread_mutex_init(&rb->rlock,NULL);
-	pthread_mutex_init(&rb->wlock,NULL);
-	return rb;
+	//clear out any existing files from old runs	
+	sem_unlink("./sem_mutex");
+	sem_unlink("./sem_slots");
+	sem_unlink("./sem_items");
+	
+
+	buffer->mutex = sem_open("./sem_mutex",O_CREAT,0644,1);		
+	buffer->slots = sem_open("./sem_slots",O_CREAT,0644,n);		
+	buffer->items = sem_open("./sem_items",O_CREAT,0644,0);		
+	return buffer;
 }
 
-//TODO:
-void delete_ring_buffer(void);
-
-bool is_buffer_empty(RingBuffer *rb) {
-	if(!rb)
-		return false;
-	if((rb->head+1)%RB_SIZE == rb->tail) {
-		return true;
+void Buffer_delete(Buffer_t *buffer) {
+	if(!buffer)
+		return;
+	for(int i=0;i<buffer->count;i++) {
+		if(buffer->records[i]!=NULL)
+			free(buffer->records[i]);	
 	}
-	return false;
+	sem_close(buffer->mutex);
+	sem_close(buffer->slots);
+	sem_close(buffer->items);
+	
+	sem_unlink("./sem_mutex");
+	sem_unlink("./sem_slots");
+	sem_unlink("./sem_items");
+	
+	free(buffer->records);
+	free(buffer);
 }
 
-bool is_buffer_full(RingBuffer *rb) {
-	if(!rb)
+
+bool  Buffer_insert(Buffer_t *buffer,char *record) {
+	if(!buffer) {
+		printf("\nBuffer is NULL");
 		return false;
-		
-	if((rb->tail+1)%RB_SIZE==rb->head){
-		return true;
 	}
-	return false;
+
+	sem_wait(buffer->slots);
+	sem_wait(buffer->mutex);
+	buffer->records[(++buffer->rear)%(buffer->n)] = record;
+	buffer->count = (++buffer->count)%(buffer->n);
+	sem_post(buffer->mutex);
+	sem_post(buffer->items);
+	#ifdef DEBUG 
+	printf("\nInsert - Number of items in buffer : %zu",buffer->count);
+	#endif
+	return true;
 }
 
-void* read_buffer(RingBuffer *rb,struct timespec *sleep) {
-	if(!rb)
+char * Buffer_remove(Buffer_t *buffer) {
+	if(!buffer)
 		return NULL;
 
-	char *data=NULL;
-
-	if(!is_buffer_empty(rb)) {
-		pthread_mutex_lock(&rb->rlock);
-		data = rb->buffer[rb->head];
-		rb->head = (rb->head+1)%RB_SIZE;
-		pthread_mutex_unlock(&rb->rlock);
-		
-		return data;
-	}	
-	printf("\nBuffer is Empty!!");
-//	nanosleep(sleep,sleep);
-	return NULL;
-}
-
-bool write_buffer(RingBuffer *rb, char* data,struct timespec *sleep) {
-	if(!rb)
-		return false;
-
-	if(!is_buffer_full(rb)) {
-		pthread_mutex_lock(&rb->wlock);
-		rb->buffer[rb->tail] = data;
-		rb->tail = (rb->tail+1)%RB_SIZE;
-		pthread_mutex_unlock(&rb->wlock);
-
-		return true;
-	}	
-	printf("\nBuffer is Full!!");
-//	nanosleep(sleep,sleep);
-	char *line;
-	while(1) {
-		if(is_buffer_empty(rb)) {
-			break;
-		}
-		line = (char*) read_buffer(rb,sleep);
-        if(line != NULL) {
-            printf("\n\tread line %s",line);
-		}
+	char *item;
+	
+	if(sem_trywait(buffer->items)==-1 || game_over) {
+		return NULL;
 	}
-	return false;
+	sem_wait(buffer->mutex);
+	item = buffer->records[(++buffer->front)%(buffer->n)];
+	if(buffer->count>0)
+		buffer->count--;
+	sem_post(buffer->mutex);
+	sem_post(buffer->slots);
+
+	#ifdef DEBUG
+	printf("\nRemove - Number of items in buffer : %zu",buffer->count);
+	#endif
+	return item;
 }
 
-
-typedef struct {
-	char name[25];
-	//RingBuffer *rb;
-	Buffer_t *rb;
-	Hashtable *ht;
-	FILE *file;
-    struct timespec sleep; 
-}Thread_arg;
-
-bool game_over = false;
+bool Buffer_empty(Buffer_t *buffer) {
+	size_t count;
+	sem_wait(buffer->mutex);
+	count = buffer->count;
+	sem_post(buffer->mutex);
+	
+	printf("\nIs Buffer Empty : Number of items in buffer : %zu",buffer->count);
+	if(count==0) {
+		return true;
+	}
+	return false; 
+}
 
 void* rb_write(void* arg) {
 	FILE *file = (FILE*) ((Thread_arg*)arg)->file;
-	//RingBuffer *rb = (RingBuffer*)((Thread_arg*)arg)->rb;
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
-	char *line =(char*) malloc(256);
-	struct timespec sleep = ((Thread_arg*)arg)->sleep;
-	bool written;
+	char buf[256];// (char*) malloc(256);
+    struct timespec sleep; 
+	sleep.tv_sec = 1;
+    sleep.tv_nsec = 500;	
+	char *line;	
 
 	printf("\nwriter thread started");
-	while((line = fgets(line, 256, file))) {
-		if(!line)
-			break; 
+    while (fgets(buf, 256, file)) {
+		line = strdup(buf);
 		printf("\nwriting line %s",line);
 		Buffer_insert(rb,line);
-		//written = false;
-		//while(!written){
-		//		written = write_buffer(rb,line,&sleep);
-			//if(!written)
-			//	nanosleep(&sleep,&sleep);
-		//}
 	}
 	printf("\nReached EOF,writer thread exiting");
-	while(!Buffer_empty(rb));//wait for readers to finish
+	while(!Buffer_empty(rb));
 	game_over = true;
 	return NULL;
 }
 
 void* rb_read(void* arg) {
-	//RingBuffer *rb = (RingBuffer*)((Thread_arg*)arg)->rb;
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
+	Hashtable *ht = (Hashtable*)  ((Thread_arg*)arg)->ht;
 	char *thread_name = (char*)((Thread_arg*)arg)->name;
 	char *line = NULL;
 	char *name,*brkb,*reading,**tokens;
 	float value;
 	size_t tok_count=0;
-	Hashtable *ht = (Hashtable *)((Thread_arg*)arg)->ht;
-	struct timespec sleep = ((Thread_arg*)arg)->sleep;
+   	int len;
+	struct timespec sleep; 
+	sleep.tv_sec = 0;
+    sleep.tv_nsec = 150;	
 
 	printf("\nreader thread %s started",thread_name);
 	while(!game_over) {; 
-//		printf("\nreader thread %s reading",thread_name);
-//		line = (char*) read_buffer(rb,&sleep);
 		line  = Buffer_remove(rb);
 		if(line != NULL) {
 			printf("\n\tread line %s",line);
-			int len = strlen(line);
-			if(len==0)
-				continue;
+			len = strlen(line);
 			tokens = str_split(line,len,';',&tok_count,len);
 			if(tok_count < 2) {
 				printf("\nseperator not found, unable to split string, %s",line);
-				//goto sleep;
 				continue;  
 			}
 			name = tokens[0];
 			reading = tokens[1];
 			if(!name || !reading) {
 				fprintf(stderr,"\nInvalid reading from line %s",line);
-				//goto sleep;
 				continue;
 			}
-			//printf("\n\tsplit line to fields %s,%s",name,reading);
 			value = strtof(reading,NULL);    
 			printf("\n\tinserting %s : %f", name,value);
-			//if(get(ht,name) == NULL)	{
-		    //	insert(ht,name,value);	 
-			//}
-			//else {
-			//	printf("\n\tFound existing record %s",name);
-			//}
+		    insert(ht,name,value);	 
 			free(line);
 			line = NULL;
 		}
-		else{
-			sleep:
+		else {
+			//if nothing was read, take a short nap
 			nanosleep(&sleep,&sleep);
 		}
 	}
@@ -423,12 +411,11 @@ void* multi_thread_test(void) {
 	const char* filename = "data.txt";
     FILE* file = fopen(filename,"r"); 
 	int error;
-//	RingBuffer *rb = create_ring_buffer();
-	Hashtable *ht = create_hashtable();
 	Buffer_t *rb = Buffer_create(RB_SIZE);
-	pthread_t tid[5]; 
+ 	Hashtable *ht = create_hashtable();
+
 	
-	if(ht==NULL||rb==NULL||file==NULL){
+	if(ht==NULL || rb==NULL || file==NULL){
 		printf("\nError, unable to start");
 		return NULL;
 	}	
@@ -440,8 +427,6 @@ void* multi_thread_test(void) {
 	writer->rb = rb;
 	writer->file = file;
 	writer->ht = NULL;
- 	writer->sleep.tv_sec = 0;
-    writer->sleep.tv_nsec = 10;	
 	
 	error = pthread_create(&(tid[0]), NULL, &rb_write, writer); 
     if (error != 0){
@@ -450,15 +435,12 @@ void* multi_thread_test(void) {
 	}
 
 	
-	for(int i=1;i<5;i++) {
+	for(int i=1;i<THREAD_MAX;i++) {
 		Thread_arg *reader = malloc(sizeof(Thread_arg));
 		sprintf(reader->name,"reader_%d",i);
 		reader->rb = rb;
 		reader->file = NULL;
 		reader->ht = ht;
-		reader->sleep.tv_sec = 0;
-		reader->sleep.tv_nsec = 10;		
-
 		error = pthread_create(&(tid[i]), NULL, &rb_read, reader); 
 		if (error != 0){
 			fprintf(stderr,"failed to create writer thread_%d",i);
@@ -466,16 +448,16 @@ void* multi_thread_test(void) {
 		}
 	}
 
-	for(int i=0;i<5;i++) {
+	for(int i=0;i<THREAD_MAX;i++) {
 		pthread_join(tid[i],NULL);
 	}
-  
+  	Buffer_delete(rb);
     fclose(file); 
-	//print_ht(ht);
-	
+	print_ht(ht);
+	calculate_mean_and_print_result(ht);	
+	delete_hashtable(ht);	
 	return NULL;	 
 }
-
 
 void single_thread_test() {
 	const char* filename = "data.txt";
