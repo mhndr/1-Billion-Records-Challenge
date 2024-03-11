@@ -1,17 +1,31 @@
-#include<pthread.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<strings.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <semaphore.h>
 #include <stdbool.h>
 #include <time.h> 
+#include <pthread.h>
 #include "ring_buffer.h"
 
-#define RB_SIZE (10)
+#define RB_SIZE (1000)
 #define THREAD_MAX (5)
 
 pthread_t tid[THREAD_MAX];
 bool game_over = false;
+
+
+extern char **str_split(const char *in, size_t in_len, char delm, size_t *num_elm, size_t max);
+extern void str_split_free(char **in, size_t num_elm);
+
+
+typedef struct {
+	char name[25];
+	Buffer_t *rb;
+	FILE *file;
+	pthread_t *readers;
+	size_t reader_cnt;
+}Thread_arg;
+
 
 
 Buffer_t* Buffer_create(int n) {
@@ -106,16 +120,6 @@ bool Buffer_empty(Buffer_t *buffer) {
 	return false; 
 }
 
-
-typedef struct {
-	char name[25];
-	Buffer_t *rb;
-	FILE *file;
-	pthread_t *readers;
-	size_t reader_cnt;
-}Thread_arg;
-
-
 void* rb_write(void* arg) {
 	FILE *file = (FILE*) ((Thread_arg*)arg)->file;
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
@@ -124,10 +128,7 @@ void* rb_write(void* arg) {
 	sleep.tv_sec = 1;
     sleep.tv_nsec = 500;	
 	char *line;	
-	if(!rb) {
-		printf("\nno ring buffer to write to");
-		return NULL;
-	}
+
 	printf("\nwriter thread started");
     while (fgets(buf, 256, file)) {
 		line = strdup(buf);
@@ -144,17 +145,41 @@ void* rb_read(void* arg) {
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
 	char *thread_name = (char*)((Thread_arg*)arg)->name;
 	char *line = NULL;
-    struct timespec sleep; 
-	sleep.tv_sec = 1;
-    sleep.tv_nsec = 100;	
-	
+	char *name,*brkb,*reading,**tokens;
+	float value;
+	size_t tok_count=0;
+   	int len;
+	struct timespec sleep; 
+	sleep.tv_sec = 0;
+    sleep.tv_nsec = 150;	
+
 	printf("\nreader thread %s started",thread_name);
 	while(!game_over) {; 
 		line  = Buffer_remove(rb);
 		if(line != NULL) {
 			printf("\n\tread line %s",line);
+			len = strlen(line);
+			tokens = str_split(line,len,';',&tok_count,len);
+			if(tok_count < 2) {
+				printf("\nseperator not found, unable to split string, %s",line);
+				continue;  
+			}
+			name = tokens[0];
+			reading = tokens[1];
+			if(!name || !reading) {
+				fprintf(stderr,"\nInvalid reading from line %s",line);
+				continue;
+			}
+			value = strtof(reading,NULL);    
+			printf("\n\tinserting %s : %f", name,value);
+			//if(get(ht,name) == NULL)	{
+		    //	insert(ht,name,value);	 
 			free(line);
 			line = NULL;
+		}
+		else {
+			//if nothing was read, take a short nap
+			nanosleep(&sleep,&sleep);
 		}
 	}
 	#ifdef DEBUG
