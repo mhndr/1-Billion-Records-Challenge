@@ -1,7 +1,7 @@
 #include<sys/semaphore.h>
 
 typedef struct {
-	char **records;
+	wchar_t **records;
 	int n;
 	size_t count;
 	int front;
@@ -18,7 +18,7 @@ typedef struct {
 
 Buffer_t* Buffer_create(int n);
 void  	  Buffer_delete(Buffer_t *buffer);
-bool  	  Buffer_insert(Buffer_t *buffer,char *record);
-char* 	  Buffer_remove(Buffer_t *buffer);
+bool  	  Buffer_insert(Buffer_t *buffer,wchar_t *record);
+wchar_t*  Buffer_remove(Buffer_t *buffer);
 bool  	  Buffer_empty(Buffer_t *buffer);
 

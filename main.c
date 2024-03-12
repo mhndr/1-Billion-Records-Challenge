@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <time.h> 
 #include <semaphore.h>
+#include <wchar.h>
 #include "ring_buffer.h"
 
 #define HT_SIZE 50000
@@ -18,11 +19,11 @@ pthread_t tid[R_THREAD_MAX+W_THREAD_MAX];
 bool writers_exited = false;
 
 
-extern char **str_split(const char *in, size_t in_len, char delm, size_t *num_elm, size_t max);
-extern void str_split_free(char **in, size_t num_elm);
+extern wchar_t **split_wchar(const wchar_t *in, wchar_t delm, size_t *num_elm);
+extern void str_split_free(wchar_t **in, size_t num_elm);
 
 typedef struct {
-	char *key;
+	wchar_t *key; //TODO:use wide char
 	int count;
 	int sum;
 	float min;
@@ -56,7 +57,7 @@ typedef struct {
 }Thread_arg;
 
 
-long hash(char* key) {
+long hash(wchar_t* key) {
 	long hashVal = 0;
 	while (*key != '\0') {
 		hashVal = (hashVal << 4) + *(key++);
@@ -68,7 +69,7 @@ long hash(char* key) {
 }
 
 
-int insert(Hashtable *ht, char* key, float value) {
+int insert(Hashtable *ht, wchar_t* key, float value) {
 	size_t key_hash = hash(key);
 	size_t idx = key_hash % HT_SIZE;
 	Record *record;
@@ -85,8 +86,8 @@ int insert(Hashtable *ht, char* key, float value) {
 		while(curr) {
 			if(!curr->record || !curr->record->key)
 				return -1;
-
-			if(!strcmp(curr->record->key,key)){
+			wprintf(L"\ncomparing %ls,%ls",curr->record->key,key);
+			if(!wcscmp(curr->record->key,key)){
 				//found, update values
 				record = curr->record;
 				record->count++;
@@ -102,8 +103,8 @@ int insert(Hashtable *ht, char* key, float value) {
 	}
 
 	record = (Record*)malloc(sizeof(Record));
-	record->key = (char*)malloc(strlen(key)+1);
-	strncpy(record->key, key,strlen(key));
+	//record->key = (wchar_t*)malloc(wcslen(key)+1);
+	record->key = wcsdup(key);
 	record->count = 1;
 	record->min = value;
 	record->max = value;
@@ -121,7 +122,7 @@ int insert(Hashtable *ht, char* key, float value) {
 	return 0;
 }
 
-Record* get(Hashtable *ht, char* key) {
+Record* get(Hashtable *ht, wchar_t* key) {
 	if(ht==NULL || key==NULL)
 		return NULL;
 	
@@ -140,7 +141,7 @@ Record* get(Hashtable *ht, char* key) {
 		return NULL;
 	}
 	while(curr) {
-		if(!strcmp(curr->record->key,key)) {
+		if(!wcscmp(curr->record->key,key)) {
 			return curr->record;
 		}
 		curr = curr->next;
@@ -200,7 +201,7 @@ int print_ht(Hashtable* ht) {
 			}
 			printf("\n");
 			while(curr) {
-				printf(" %s ",curr->record->key);
+				printf(" %ls ",curr->record->key);
 				curr = curr->next;
 			}
 		}
@@ -208,18 +209,18 @@ int print_ht(Hashtable* ht) {
 	return 0;
 }
 
-char** get_keys(Hashtable *ht, size_t *count) {
+wchar_t** get_keys(Hashtable *ht, size_t *count) {
 	if(!ht)
 		return NULL;
 
-	char **keys = (char**) malloc((sizeof(char*))*(ht->nentries));
+	wchar_t **keys = (wchar_t**) malloc((sizeof(wchar_t*))*(ht->nentries));
 	size_t cnt = 0;	
 	for(int i=0;i<HT_SIZE;i++) {
 		if(ht->list[i]->head != NULL) {
 			Node *curr = ht->list[i]->head;
 			while(curr) {
-				keys[cnt] = (char*) malloc(sizeof(strlen(curr->record->key)+1));
-				strcpy(keys[cnt],curr->record->key);
+				//keys[cnt] = (wchar_t*) malloc(sizeof(wcslen(curr->record->key)+1));
+				keys[cnt] = wcsdup(curr->record->key);
 				curr = curr->next;
 				cnt++;
 			}
@@ -235,14 +236,14 @@ int calculate_mean_and_print_result(Hashtable *ht) {
 		return -1;	
 	
 	size_t key_count;
-	char **keys=get_keys(ht,&key_count);
+	wchar_t **keys=get_keys(ht,&key_count);
 	printf("\n\nKEYS-get(key)");
 	for(int i=0;i<key_count;i++) {
 		Record *record = get(ht,keys[i]);
 		if(record)
-			printf("\n%s - %f",keys[i],(float)record->sum/(float)record->count);
+			printf("\n%ls - %f",keys[i],(float)record->sum/(float)record->count);
 		else
-			printf("\n%s - Not Found" ,keys[i]);
+			printf("\n%ls - Not Found" ,keys[i]);
 	}
 	return 0;
 }
@@ -250,7 +251,7 @@ int calculate_mean_and_print_result(Hashtable *ht) {
 
 Buffer_t* Buffer_create(int n) {
 	Buffer_t *buffer = (Buffer_t*) malloc(sizeof(Buffer_t));
-	buffer->records = calloc(n,sizeof(char*));
+	buffer->records = calloc(n,sizeof(wchar_t*));
 	buffer->n = n;
 	buffer->count = 0;
 	buffer->front = buffer->rear = 0;
@@ -287,7 +288,7 @@ void Buffer_delete(Buffer_t *buffer) {
 }
 
 
-bool  Buffer_insert(Buffer_t *buffer,char *record) {
+bool  Buffer_insert(Buffer_t *buffer,wchar_t *record) {
 	if(!buffer) {
 		printf("\nBuffer is NULL");
 		return false;
@@ -305,11 +306,11 @@ bool  Buffer_insert(Buffer_t *buffer,char *record) {
 	return true;
 }
 
-char * Buffer_remove(Buffer_t *buffer) {
+wchar_t * Buffer_remove(Buffer_t *buffer) {
 	if(!buffer)
 		return NULL;
 
-	char *item;
+	wchar_t *item;
 	
 	if(sem_trywait(buffer->items)==-1 ) {
 		return NULL;
@@ -344,16 +345,16 @@ void* rb_write(void* arg) {
 	FILE *file = (FILE*) ((Thread_arg*)arg)->file;
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
 	char *thread_name = (char*)((Thread_arg*)arg)->name;
-	char buf[256];// (char*) malloc(256);
+	wchar_t buf[256];// (char*) malloc(256);
     struct timespec sleep; 
 	sleep.tv_sec = 1;
     sleep.tv_nsec = 500;	
-	char *line;	
+	wchar_t *line;	
 
 	printf("\nwriter thread started");
-    while (fgets(buf, 256, file)) {
-		line = strdup(buf);
-		printf("\nwriting line %s",line);
+    while (fgetws(buf, sizeof(buf), file)!=NULL) {
+		line = wcsdup(buf);
+		printf("\nwriting line %ls",line);
 		Buffer_insert(rb,line);
 	}
 	printf("\nReached EOF,writer thread exiting");
@@ -369,8 +370,8 @@ void* rb_read(void* arg) {
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
 	Hashtable *ht = (Hashtable*)  ((Thread_arg*)arg)->ht;
 	char *thread_name = (char*)((Thread_arg*)arg)->name;
-	char *line = NULL;
-	char *name,*brkb,*reading,**tokens;
+	wchar_t *line = NULL;
+	wchar_t *name,*brkb,**tokens,*reading;
 	float value;
 	size_t tok_count=0;
    	int len;
@@ -382,21 +383,20 @@ void* rb_read(void* arg) {
 	while(!writers_exited) {; 
 		line  = Buffer_remove(rb);
 		if(line != NULL) {
-			printf("\n\tread line %s",line);
-			len = strlen(line);
-			tokens = str_split(line,len,';',&tok_count,len);
+			printf("\n\tread line %ls",line);
+			tokens = split_wchar(line,L';',&tok_count);
 			if(tok_count < 2) {
-				printf("\nseperator not found, unable to split string, %s",line);
+				printf("\nseperator not found, unable to split string, %ls",line);
 				continue;  
 			}
 			name = tokens[0];
 			reading = tokens[1];
 			if(!name || !reading) {
-				fprintf(stderr,"\nInvalid reading from line %s",line);
+				fprintf(stderr,"\nInvalid reading from line %ls",line);
 				continue;
 			}
-			value = strtof(reading,NULL);    
-			printf("\n\tinserting %s : %f", name,value);
+			value = wcstof(reading,NULL);    
+			wprintf(L"\n\tinserting %ls : %f", name,value);
 		    insert(ht,name,value);	 
 			free(line);
 			line = NULL;
@@ -465,18 +465,18 @@ void* multi_thread_test(void) {
 	delete_hashtable(ht);	
 	return NULL;	 
 }
-
+/*
 void single_thread_test() {
 	const char* filename = "data.txt";
     FILE* file = fopen(filename,"r"); 
-    char line[256]; 
+    wchar_t line[256]; 
 	char *name,**tokens,*reading;
 	size_t tok_count;
 	float value;
 	Hashtable *ht = create_hashtable();
     while (fgets(line, sizeof(line), file)) {
-		int len = strlen(line);
-		tokens = str_split(line,len,';',&tok_count,len);
+		int len = wcslen(line);
+		tokens = split_wchar(line,';',&tok_count);
 		if(tok_count < 2) {
 			printf("\nseperator not found, unable to split string, %s",line);
 			continue;  
@@ -497,7 +497,7 @@ void single_thread_test() {
 	calculate_mean_and_print_result(ht);	
 	delete_hashtable(ht);	
 }
-
+*/
 int main() {
 	multi_thread_test();
 	//single_thread_test();
