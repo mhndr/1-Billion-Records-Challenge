@@ -15,7 +15,7 @@
 
 
 pthread_t tid[R_THREAD_MAX+W_THREAD_MAX];
-bool game_over = false;
+bool writers_exited = false;
 
 
 extern char **str_split(const char *in, size_t in_len, char delm, size_t *num_elm, size_t max);
@@ -311,7 +311,7 @@ char * Buffer_remove(Buffer_t *buffer) {
 
 	char *item;
 	
-	if(sem_trywait(buffer->items)==-1 || game_over) {
+	if(sem_trywait(buffer->items)==-1 ) {
 		return NULL;
 	}
 	sem_wait(buffer->mutex);
@@ -358,7 +358,7 @@ void* rb_write(void* arg) {
 	}
 	printf("\nReached EOF,writer thread exiting");
 	while(!Buffer_empty(rb));
-	game_over = true;
+	writers_exited = true;
 	#ifdef DEBUG
 	printf("\nreader thread %s exited",thread_name);
 	#endif
@@ -379,7 +379,7 @@ void* rb_read(void* arg) {
     sleep.tv_nsec = 150;	
 
 	printf("\nreader thread %s started",thread_name);
-	while(!game_over) {; 
+	while(!writers_exited) {; 
 		line  = Buffer_remove(rb);
 		if(line != NULL) {
 			printf("\n\tread line %s",line);
