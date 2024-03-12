@@ -10,9 +10,11 @@
 #define HT_SIZE 50000
 #define RB_SIZE 1000
 
-#define THREAD_MAX (5)
+#define W_THREAD_MAX (5)
+#define R_THREAD_MAX (5)
 
-pthread_t tid[THREAD_MAX];
+
+pthread_t tid[R_THREAD_MAX+W_THREAD_MAX];
 bool game_over = false;
 
 
@@ -341,6 +343,7 @@ bool Buffer_empty(Buffer_t *buffer) {
 void* rb_write(void* arg) {
 	FILE *file = (FILE*) ((Thread_arg*)arg)->file;
 	Buffer_t *rb  = (Buffer_t*) ((Thread_arg*)arg)->rb;
+	char *thread_name = (char*)((Thread_arg*)arg)->name;
 	char buf[256];// (char*) malloc(256);
     struct timespec sleep; 
 	sleep.tv_sec = 1;
@@ -356,6 +359,9 @@ void* rb_write(void* arg) {
 	printf("\nReached EOF,writer thread exiting");
 	while(!Buffer_empty(rb));
 	game_over = true;
+	#ifdef DEBUG
+	printf("\nreader thread %s exited",thread_name);
+	#endif
 	return NULL;
 }
 
@@ -422,20 +428,21 @@ void* multi_thread_test(void) {
 	
 	printf("\nopened file and created ring buffer");
 	
-	Thread_arg *writer = malloc(sizeof(Thread_arg));
-	strcpy(writer->name,"writer");
-	writer->rb = rb;
-	writer->file = file;
-	writer->ht = NULL;
-	
-	error = pthread_create(&(tid[0]), NULL, &rb_write, writer); 
-    if (error != 0){
-		fprintf(stderr,"failed to create writer thread");
- 		return NULL;
+	for(int i=0;i<R_THREAD_MAX;i++) {
+		Thread_arg *writer = malloc(sizeof(Thread_arg));
+		sprintf(writer->name,"writer_%d",i);
+		writer->rb = rb;
+		writer->file = file;
+		writer->ht = NULL;
+		
+		error = pthread_create(&(tid[i]), NULL, &rb_write, writer); 
+		if (error != 0){
+			fprintf(stderr,"failed to create writer thread %d",i);
+			return NULL;
+		}
 	}
-
 	
-	for(int i=1;i<THREAD_MAX;i++) {
+	for(int i=W_THREAD_MAX;i<W_THREAD_MAX+R_THREAD_MAX;i++) {
 		Thread_arg *reader = malloc(sizeof(Thread_arg));
 		sprintf(reader->name,"reader_%d",i);
 		reader->rb = rb;
@@ -443,12 +450,12 @@ void* multi_thread_test(void) {
 		reader->ht = ht;
 		error = pthread_create(&(tid[i]), NULL, &rb_read, reader); 
 		if (error != 0){
-			fprintf(stderr,"failed to create writer thread_%d",i);
+			fprintf(stderr,"failed to create writer thread %d",i);
 			return NULL;
 		}
 	}
 
-	for(int i=0;i<THREAD_MAX;i++) {
+	for(int i=0;i<R_THREAD_MAX+W_THREAD_MAX;i++) {
 		pthread_join(tid[i],NULL);
 	}
   	Buffer_delete(rb);
