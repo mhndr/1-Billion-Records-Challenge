@@ -1,60 +1,78 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<wchar.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <wchar.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "hashtable.h"
 
-
-#define THREAD_MAX (10)
-
-
-pthread_t tid[THREAD_MAX];
+#define THREAD_MAX (1)
 
 
 typedef struct {
 	char name[25];
-	//Buffer_t *rb;
-	//Hashtable *ht;
-	FILE *out_file;
+	Hashtable *ht;
+//	FILE *out_file;
 	char *chunk_start;
 	char *chunk_end;
 }Thread_arg;
 
+pthread_t tid[THREAD_MAX+1]; //+1 for remainder records
+Thread_arg reader[THREAD_MAX+1];
+
 
 void * do_read(void* arg) {
-	FILE *out_file = ((Thread_arg*)arg)->out_file;
+	//FILE *out_file = ((Thread_arg*)arg)->out_file;
 	char *thread_name = ((Thread_arg*)arg)->name;
-	char *end,*name,*value;
-	
-	char *row_start = ((Thread_arg*)arg)->chunk_start;
+	char *delim,*value;
+	wchar_t *name;
+	Hashtable *ht = ((Thread_arg*)arg)->ht;
+	char *iter = ((Thread_arg*)arg)->chunk_start;
 	char *last = ((Thread_arg*)arg)->chunk_end;
-	
-	printf("\nThread %s started",thread_name);
-	while(row_start!=last) {
-		end = strchr(row_start, ';');
-		if(end==0)
+	//printf("\nThread %s started",thread_name);
+	while(iter!=last) {
+		delim = strchr(iter, ';');
+		if(delim==0)
 			break;
-		*end = '\0';
-		name = strdup(row_start);
-		*end = ';'; 
-		row_start = end+1;
+		*delim = '\0';
+		name = (wchar_t*)malloc((delim-iter+1)*sizeof(wchar_t));
+		mbstowcs(name,iter,delim-iter);
+		*delim = ';'; 
+		iter = delim+1;
 
-		end = strchr(row_start, '\n');
-		if(end==0)
+		delim = strchr(iter, '\n');
+		if(delim==0)
 			break;
-		*end = '\0';
-		value = strdup(row_start);
-		fprintf(out_file,"%s : %f\n",name,strtof(value,NULL));
-		*end = '\n';
-		row_start = end+1; 
+		*delim = '\0';
+//		fprintf(out_file,"%ls : %f\n",name,strtof(iter,NULL));
+		insert(ht,name,strtof(iter,NULL));
+		*delim = '\n';
+		iter = delim+1; 
 	}
-	fclose(out_file);
-	printf("\nThread %s done",thread_name);
+	//fclose(out_file);
+	//printf("\nThread %s done",thread_name);
 	return NULL;
+}
+
+
+int calculate_mean_and_print_result(Hashtable *ht) {
+	if(!ht)
+		return -1;	
+	
+	size_t key_count;
+	wchar_t **keys=get_keys(ht,&key_count);
+	printf("\n\nKEYS-get(key)");
+	for(int i=0;i<key_count;i++) {
+		Record *record = get(ht,keys[i]);
+		if(record)
+			printf("\n%ls - %f",keys[i],(float)record->sum/(float)record->count);
+		else
+			printf("\n%ls - Not Found" ,keys[i]);
+	}
+	return 0;
 }
 
 
@@ -62,7 +80,8 @@ int main(int argc, char *argv[]) {
 	struct stat finfo;
 	int fh, chunk,error;
 	char *chunk_start=NULL,*chunk_end=NULL,*mem_start;
-	Thread_arg reader[THREAD_MAX];
+	int thread_count = THREAD_MAX,i;
+	Hashtable *ht = create_hashtable();
 
 	if(stat(argv[1], &finfo) == -1) return 0;
 	if((fh = open(argv[1], O_RDWR)) == -1) return 0;
@@ -75,18 +94,17 @@ int main(int argc, char *argv[]) {
 	chunk = finfo.st_size/THREAD_MAX;
 	
 	//initialize thread args
-	for(int i=0;i<THREAD_MAX;i++) {
+	for(i=0;i<THREAD_MAX;i++) {
 		sprintf(reader[i].name,"reader_%d",i);
-		reader[i].out_file = fopen(reader->name,"wb");
+/*
+		reader[i].out_file = fopen(reader[i].name,"wb");
 		if(reader[i].out_file == NULL) //if file does not exist, create it
    		{
-        	reader[i].out_file = fopen(reader->name, "wb");
-        	if (reader[i].out_file == NULL) {
-				fprintf(stderr,"\nError while file to write");
-				return -1;
-			}
+			fprintf(stderr,"\nError while file to write");
+			return -1;
     	}
-		//TODO: partition the file better
+*/
+		reader[i].ht = ht;
 		if(chunk_start+chunk > mem_start+finfo.st_size){
 			printf("\nchunks exceeded bounds, exiting");
 			return -1;
@@ -132,10 +150,24 @@ int main(int argc, char *argv[]) {
 	}
 	if(chunk !=0) {
 		printf("\nRemainder\n%s",chunk_start);
+		i=THREAD_MAX;
+		sprintf(reader[i].name,"reader_extra");
+/*	
+		reader[i].out_file = fopen(reader[i].name,"wb");
+		if(reader[i].out_file == NULL) //if file does not exist, create it
+   		{
+			fprintf(stderr,"\nError while file to write");
+			return -1;
+    	}
+*/
+		reader[i].ht = ht;
+		reader[i].chunk_start = chunk_start;
+		reader[i].chunk_end = chunk_end;
+		thread_count = THREAD_MAX+1;
 	}
 	
 	//create threads
-	for(int i=0;i<THREAD_MAX;i++) {
+	for(int i=0;i<thread_count;i++) {
 		error = pthread_create(&(tid[i]), NULL, &do_read, (void*)&reader[i]); 
 		if (error != 0){
 			fprintf(stderr,"\nfailed to create writer thread %d",i);
@@ -144,11 +176,12 @@ int main(int argc, char *argv[]) {
 	}
 	
 	//wait till threads finish
-	for(int i=0;i<THREAD_MAX;i++) {
+	for(int i=0;i<thread_count;i++) {
 		pthread_join(tid[i],NULL);
 	}
 
-	//calculate_mean();
+	//print_ht(ht);
+	calculate_mean_and_print_result(ht);
 	munmap(mem_start, finfo.st_size);
 	close(fh);
 	return 0;
