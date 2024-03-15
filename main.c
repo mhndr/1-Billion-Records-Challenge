@@ -8,11 +8,11 @@
 #include <wchar.h>
 #include "ring_buffer.h"
 
-#define HT_SIZE 50000
-#define RB_SIZE 1000
+#define HT_SIZE 999999
+#define RB_SIZE 999999
 
-#define W_THREAD_MAX (5)
-#define R_THREAD_MAX (5)
+#define W_THREAD_MAX (20)
+#define R_THREAD_MAX (20)
 
 
 pthread_t tid[R_THREAD_MAX+W_THREAD_MAX];
@@ -86,7 +86,6 @@ int insert(Hashtable *ht, wchar_t* key, float value) {
 		while(curr) {
 			if(!curr->record || !curr->record->key)
 				return -1;
-			wprintf(L"\ncomparing %ls,%ls",curr->record->key,key);
 			if(!wcscmp(curr->record->key,key)){
 				//found, update values
 				record = curr->record;
@@ -334,7 +333,7 @@ bool Buffer_empty(Buffer_t *buffer) {
 	count = buffer->count;
 	sem_post(buffer->mutex);
 	
-	printf("\nIs Buffer Empty : Number of items in buffer : %zu",buffer->count);
+	//printf("\nIs Buffer Empty : Number of items in buffer : %zu",buffer->count);
 	if(count==0) {
 		return true;
 	}
@@ -351,13 +350,13 @@ void* rb_write(void* arg) {
     sleep.tv_nsec = 500;	
 	wchar_t *line;	
 
-	printf("\nwriter thread started");
+	//printf("\nwriter thread started");
     while (fgetws(buf, sizeof(buf), file)!=NULL) {
 		line = wcsdup(buf);
-		printf("\nwriting line %ls",line);
+	//	printf("\nwriting line %ls",line);
 		Buffer_insert(rb,line);
 	}
-	printf("\nReached EOF,writer thread exiting");
+	//printf("\nReached EOF,writer thread exiting");
 	while(!Buffer_empty(rb));
 	writers_exited = true;
 	#ifdef DEBUG
@@ -379,24 +378,24 @@ void* rb_read(void* arg) {
 	sleep.tv_sec = 0;
     sleep.tv_nsec = 150;	
 
-	printf("\nreader thread %s started",thread_name);
+	//printf("\nreader thread %s started",thread_name);
 	while(!writers_exited) {; 
 		line  = Buffer_remove(rb);
 		if(line != NULL) {
-			printf("\n\tread line %ls",line);
+	//		printf("\n\tread line %ls",line);
 			tokens = split_wchar(line,L';',&tok_count);
 			if(tok_count < 2) {
-				printf("\nseperator not found, unable to split string, %ls",line);
+				//printf("\nseperator not found, unable to split string, %ls",line);
 				continue;  
 			}
 			name = tokens[0];
 			reading = tokens[1];
 			if(!name || !reading) {
-				fprintf(stderr,"\nInvalid reading from line %ls",line);
+				//fprintf(stderr,"\nInvalid reading from line %ls",line);
 				continue;
 			}
 			value = wcstof(reading,NULL);    
-			wprintf(L"\n\tinserting %ls : %f", name,value);
+			//wprintf(L"\n\tinserting %ls : %f", name,value);
 		    insert(ht,name,value);	 
 			free(line);
 			line = NULL;
@@ -414,7 +413,7 @@ void* rb_read(void* arg) {
 
 
 void* multi_thread_test(void) {
-	const char* filename = "data.txt";
+	const char* filename = "measurements.txt";
     FILE* file = fopen(filename,"r"); 
 	int error;
 	Buffer_t *rb = Buffer_create(RB_SIZE);
@@ -426,7 +425,7 @@ void* multi_thread_test(void) {
 		return NULL;
 	}	
 	
-	printf("\nopened file and created ring buffer");
+//	printf("\nopened file and created ring buffer");
 	
 	for(int i=0;i<R_THREAD_MAX;i++) {
 		Thread_arg *writer = malloc(sizeof(Thread_arg));
@@ -460,14 +459,14 @@ void* multi_thread_test(void) {
 	}
   	Buffer_delete(rb);
     fclose(file); 
-	print_ht(ht);
+	//print_ht(ht);
 	calculate_mean_and_print_result(ht);	
 	delete_hashtable(ht);	
 	return NULL;	 
 }
 /*
 void single_thread_test() {
-	const char* filename = "data.txt";
+	const char* filename = "measurements.txt";
     FILE* file = fopen(filename,"r"); 
     wchar_t line[256]; 
 	char *name,**tokens,*reading;
