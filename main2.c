@@ -4,35 +4,42 @@
 #include <wchar.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/semaphore.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include "hashtable.h"
 
-#define THREAD_MAX (1)
+#define THREAD_MAX (10)
 
 
 typedef struct {
 	char name[25];
 	Hashtable *ht;
-//	FILE *out_file;
+#ifdef DEBUG
+	FILE *out_file;
+#endif
 	char *chunk_start;
 	char *chunk_end;
+	sem_t *start;
 }Thread_arg;
 
 pthread_t tid[THREAD_MAX+1]; //+1 for remainder records
 Thread_arg reader[THREAD_MAX+1];
 
-
 void * do_read(void* arg) {
-	//FILE *out_file = ((Thread_arg*)arg)->out_file;
+#ifdef DEBUG
+	FILE *out_file = ((Thread_arg*)arg)->out_file;
+#endif
 	char *thread_name = ((Thread_arg*)arg)->name;
 	char *delim,*value;
 	wchar_t *name;
 	Hashtable *ht = ((Thread_arg*)arg)->ht;
 	char *iter = ((Thread_arg*)arg)->chunk_start;
 	char *last = ((Thread_arg*)arg)->chunk_end;
-	//printf("\nThread %s started",thread_name);
+
+	sem_wait(((Thread_arg*)arg)->start);
+	printf("\nThread %s started",thread_name);
 	while(iter!=last) {
 		delim = strchr(iter, ';');
 		if(delim==0)
@@ -47,13 +54,17 @@ void * do_read(void* arg) {
 		if(delim==0)
 			break;
 		*delim = '\0';
-//		fprintf(out_file,"%ls : %f\n",name,strtof(iter,NULL));
+#ifdef DEBUG
+		fprintf(out_file,"%ls : %f\n",name,strtof(iter,NULL));
+#endif
 		insert(ht,name,strtof(iter,NULL));
 		*delim = '\n';
 		iter = delim+1; 
 	}
-	//fclose(out_file);
-	//printf("\nThread %s done",thread_name);
+#ifdef DEBUG
+	fclose(out_file);
+#endif
+	printf("\nThread %s done",thread_name);
 	return NULL;
 }
 
@@ -82,6 +93,7 @@ int main(int argc, char *argv[]) {
 	char *chunk_start=NULL,*chunk_end=NULL,*mem_start;
 	int thread_count = THREAD_MAX,i;
 	Hashtable *ht = create_hashtable();
+	sem_t *start;
 
 	if(stat(argv[1], &finfo) == -1) return 0;
 	if((fh = open(argv[1], O_RDWR)) == -1) return 0;
@@ -89,22 +101,26 @@ int main(int argc, char *argv[]) {
 
 	mem_start = (char*)mmap(NULL, finfo.st_size, PROT_READ|PROT_WRITE,MAP_SHARED , fh, 0);
 	if(mem_start == (char*)-1) return 0;
-	madvise(mem_start, finfo.st_size, POSIX_MADV_SEQUENTIAL);
+	madvise(mem_start, finfo.st_size, MADV_RANDOM); //POSIX_MADV_SEQUENTIAL);
 	chunk_start = mem_start;
 	chunk = finfo.st_size/THREAD_MAX;
-	
+
+	sem_unlink("./sem_start");
+	start = sem_open("./sem_mutex",O_CREAT,0644,THREAD_MAX+1);		
+
 	//initialize thread args
 	for(i=0;i<THREAD_MAX;i++) {
 		sprintf(reader[i].name,"reader_%d",i);
-/*
+#ifdef DEBUG
 		reader[i].out_file = fopen(reader[i].name,"wb");
 		if(reader[i].out_file == NULL) //if file does not exist, create it
    		{
 			fprintf(stderr,"\nError while file to write");
 			return -1;
     	}
-*/
+#endif
 		reader[i].ht = ht;
+		reader[i].start=start;
 		if(chunk_start+chunk > mem_start+finfo.st_size){
 			printf("\nchunks exceeded bounds, exiting");
 			return -1;
@@ -152,15 +168,16 @@ int main(int argc, char *argv[]) {
 		printf("\nRemainder\n%s",chunk_start);
 		i=THREAD_MAX;
 		sprintf(reader[i].name,"reader_extra");
-/*	
+#ifdef DEBUG	
 		reader[i].out_file = fopen(reader[i].name,"wb");
 		if(reader[i].out_file == NULL) //if file does not exist, create it
    		{
 			fprintf(stderr,"\nError while file to write");
 			return -1;
     	}
-*/
+#endif
 		reader[i].ht = ht;
+		reader[i].start = start;
 		reader[i].chunk_start = chunk_start;
 		reader[i].chunk_end = chunk_end;
 		thread_count = THREAD_MAX+1;
@@ -174,6 +191,10 @@ int main(int argc, char *argv[]) {
 			return -1;
 		}
 	}
+	
+	for(int i=0;i<thread_count;i++) {
+		sem_post(start);		
+	}	
 	
 	//wait till threads finish
 	for(int i=0;i<thread_count;i++) {
