@@ -10,3 +10,5 @@ ulimit -c unlimited
 cc ./main2.c ./hashtable.c -o ./1brc_2
 
 
+#attempt 3 with glibc hashtable
+cc ./main3.c  -o 1brc_3 `pkg-config --cflags glib-2.0` `pkg-config --libs glib-2.0`
